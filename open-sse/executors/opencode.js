@@ -90,7 +90,6 @@ function generateSessionId() {
   const maxTime = 0xffffffffffffn;
   const ts = maxTime - (BigInt(Date.now()) * 0x1000n);
   return `ses_${timeHex(ts)}${randomPart()}`;
-}${randomPart()}`;
 }
 
 // Declared lane for a model: primary registry alias (oc free lane / ocz keyed
