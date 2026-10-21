@@ -6,6 +6,7 @@
  */
 
 import crypto from "node:crypto";
+import { CURSOR_IDE_COMMIT, CURSOR_IDE_VERSION } from "../providers/shared.js";
 
 const UUID_DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 
@@ -72,24 +73,7 @@ export function generateCursorChecksum(machineId) {
   }
 
   // URL-safe base64 encode (without padding)
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-  let encoded = "";
-
-  for (let i = 0; i < byteArray.length; i += 3) {
-    const a = byteArray[i];
-    const b = i + 1 < byteArray.length ? byteArray[i + 1] : 0;
-    const c = i + 2 < byteArray.length ? byteArray[i + 2] : 0;
-
-    encoded += alphabet[a >> 2];
-    encoded += alphabet[((a & 3) << 4) | (b >> 4)];
-
-    if (i + 1 < byteArray.length) {
-      encoded += alphabet[((b & 15) << 2) | (c >> 6)];
-    }
-    if (i + 2 < byteArray.length) {
-      encoded += alphabet[c & 63];
-    }
-  }
+  const encoded = Buffer.from(byteArray).toString("base64url");
 
   return `${encoded}${machineId}`;
 }
@@ -138,8 +122,8 @@ export function buildCursorHeaders(accessToken, machineId = null, ghostMode = tr
     "x-amzn-trace-id": `Root=${crypto.randomUUID()}`,
     "x-client-key": clientKey,
     "x-cursor-checksum": checksum,
-    "x-cursor-client-version": "3.12.17",
-    "x-cursor-client-commit": "0fb762053c34788bb7760d5673f8a6d4c8589d50",
+    "x-cursor-client-version": CURSOR_IDE_VERSION,
+    "x-cursor-client-commit": CURSOR_IDE_COMMIT,
     "x-cursor-client-type": "ide",
     "x-cursor-client-os": os,
     "x-cursor-client-arch": arch,
